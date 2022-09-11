@@ -1,0 +1,45 @@
+{application, erl_template,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {erl_template_app, []}},
+  {applications,[
+
+    kernel, 
+    stdlib,
+
+    odbc,
+    
+    observer, 
+    runtime_tools, 
+    syntax_tools,
+    compiler,
+
+    eredis,
+    poolboy,
+    epgsql,
+    ecpool,
+
+    cowboy, 
+    cowlib, 
+    edate,
+    ranch,
+
+    iso8583_erl,
+    prometheus, 
+    sync,
+
+    jsx,
+    jwerl,
+    erlsom,
+    
+    lager
+
+  ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+  
+ ]}.
