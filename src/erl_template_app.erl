@@ -53,11 +53,11 @@ start(_StartType, _StartArgs) ->
 
   supervisor:start_child(erl_template_sup, {caban_sup, {caban_sup, start_link, []},
     permanent, 2000, supervisor, [caban_sup]}),
-  ControllerName  =  0,
-  WorkersCount    = 10,
+  ControllerName  =   0,
+  WorkersCount    =   10,
   caban_sup:start_controller(ControllerName, #{}),
   %===Стартуем и инициализируем воркеры (code/storage) либо из кода, либо из стореджа (postgres/redis)===%
-  caban_controller:start_all_workers(ControllerName, WorkersCount, code),
+  caban_controller:start_all_workers(ControllerName, WorkersCount, storage),
 
   R.
 
@@ -169,7 +169,7 @@ check_arg( ValueArgs, Keys ) ->
 % ==============================================================================================
 % ===
 % ==============================================================================================
-get_storage_name() -> redis.
+get_storage_name() -> postgres.
 % ==============================================================================================
 % ===
 % ==============================================================================================
