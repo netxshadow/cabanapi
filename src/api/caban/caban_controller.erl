@@ -64,7 +64,7 @@ code_change(_OldVsn, State = #caban_controller_state{}, _Extra) ->
 start_all_workers(Self, N, StartFrom)  ->
   case StartFrom of
     storage ->
-      WorkersList = caban_storage:get_workers_values(),
+      WorkersList = caban_storage:get_all_workers(),
       WorkersMap = start_storage_workers(WorkersList, #{}),
       log:info( "===Workers map created: ~p ", [WorkersMap]),
       gen_server:cast(list_to_atom(integer_to_list(Self)), {start_all_workers, WorkersMap});
@@ -73,6 +73,8 @@ start_all_workers(Self, N, StartFrom)  ->
       log:info( "===Workers map created: ~p ", [WorkersMap]),
       gen_server:cast(list_to_atom(integer_to_list(Self)), {start_all_workers, WorkersMap})
   end.
+% ==============================================================================================
+% ===
 % ==============================================================================================
 start_code_workers(I, N, M) ->
   case (I =< N) of

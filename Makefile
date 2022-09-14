@@ -71,7 +71,7 @@ test_release:
 	@$(REBAR3) as testing release -n $(PROJECT)
 
 debug:
-	@$(REBAR3) shell --name ${PROJECT}@192.168.31.9 --setcookie ${PROJECT}
+	@$(REBAR3) shell --name ${PROJECT}@usa.metecare.com --setcookie ${PROJECT}
 
 
 OTP_APPS = kernel stdlib ssl compiler erts crypto public_key hipe inets asn1 mnesia runtime_tools syntax_tools

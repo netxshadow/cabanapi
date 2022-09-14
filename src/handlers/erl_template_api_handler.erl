@@ -285,17 +285,17 @@ is_valid_token( false, _, _, _, _, _, Request, Time, Opts ) ->
 % ===
 % ==============================================================================================
 response( { 301, _, Headers }, Request, Time, Opts ) when is_map(Headers) ->
-  log:info("[~p] erl_template response code: ~p headers: ~s~n", [self(), 301, jsx:encode(Headers)]),
+  log:info("[~p] 1 erl_template response code: ~p headers: ~s~n", [self(), 301, jsx:encode(Headers)]),
   % { ok, cowboy_req:reply(301, maps:merge(Headers, ?HEADERS), <<"">>, Request), Opts };
   response_with_metric( cowboy_req:reply(301, maps:merge(Headers, ?HEADERS), <<"">>, Request), 301, Opts, Time );
 % ==============================================================================================
 response( { 301, _, Headers }, Request, Time, Opts ) when is_list(Headers) ->
-  log:info("[~p] erl_template response code: ~p headers: ~s~n", [self(), 301, jsx:encode(Headers)]),
+  log:info("[~p] 2 erl_template response code: ~p headers: ~s~n", [self(), 301, jsx:encode(Headers)]),
   % { ok, cowboy_req:reply(301, maps:merge(Headers, ?HEADERS), <<"">>, Request), Opts };
   response_with_metric( cowboy_req:reply(301, maps:merge(maps:from_list(Headers), ?HEADERS), <<"">>, Request), 301, Opts, Time );
 % ==============================================================================================
 response( { 301, _, Headers }, Request, Time, Opts ) ->
-  log:info("[~p] erl_template response code: ~p headers: ~p~n", [self(), 301, Headers]),
+  log:info("[~p] 3 erl_template response code: ~p headers: ~p~n", [self(), 301, Headers]),
   % { ok, cowboy_req:reply(301, maps:merge(Headers, ?HEADERS), <<"">>, Request), Opts };
   response_with_metric( cowboy_req:reply(301, maps:merge(Headers, ?HEADERS), <<"">>, Request), 301, Opts, Time );
 % ==============================================================================================
@@ -306,13 +306,13 @@ response( { 200, <<"set_cookie">>, Cookie, Response }, Request, _, Opts ) ->
     http_only => true
   },
   % log:info( "[~p] HTTP Response: ~p~n", [self(), Response] ),
-  log:info("[~p] erl_template response code: ~p data: ~s~n", [self(), 200, jsx:encode(Response)]),
+  log:info("[~p] 4 erl_template response code: ~p data: ~s~n", [self(), 200, jsx:encode(Response)]),
   Request1 = cowboy_req:set_resp_cookie(<<"sessionid">>, Cookie, Request, CookieSettings),
   { ok, cowboy_req:reply( 200, ?HEADERS, jsx:encode(Response), Request1 ), Opts };
 % ==============================================================================================
 response( { Code, Response, health_check }, Request, _, Opts ) ->
   metrics:inc(health_check),
-  % log:info("[~p] erl_template response code: ~s headers: ~s~n", [self(), Code, Response]),
+  % log:info("[~p] 5 erl_template response code: ~s headers: ~s~n", [self(), Code, Response]),
   { ok, cowboy_req:reply( Code, ?HEADERS, jsx:encode(Response), Request ), Opts};
   % response_with_metric( cowboy_req:reply( Code, ?HEADERS, jsx:encode(Response), Request ), Opts, Time );
 % ==============================================================================================
@@ -322,30 +322,30 @@ response( { Code, Response, { metrics, Headers } }, Request, _, Opts ) ->
   % response_with_metric( cowboy_req:reply( Code, Headers, Response, Request ), Opts, Time );
 % ==============================================================================================
 response( { Code, Response, { custom, Headers } }, Request, _, Opts ) ->
-  log:info("[~p] erl_template response code: ~p data: ~p~n", [self(), Code, Response]),
+  log:info("[~p] 6 erl_template response code: ~p data: ~p~n", [self(), Code, Response]),
   { ok, cowboy_req:reply( Code, Headers, Response, Request ), Opts};
   % response_with_metric( cowboy_req:reply( Code, Headers, Response, Request ), Opts, Time );
 % ==============================================================================================
 response( { Code, Response, html }, Request, Time, Opts ) ->
-  log:info("[~p] erl_template response code: ~p html: ~s~n", [self(), Code, Response]),
+  log:info("[~p] 7 erl_template response code: ~p html: ~s~n", [self(), Code, Response]),
   % log:info( "HTTP Response: ~p~n", [Response] ),
   % { ok, cowboy_req:reply( Code, ?HEADERS_H, Response, Request ), Opts};
   response_with_metric(  cowboy_req:reply( Code, ?HEADERS_H, Response, Request ), Code, Opts, Time );
 % ==============================================================================================
 response( { Code, Response, Headers }, Request, Time, Opts ) ->
-  log:info("[~p] erl_template response code: ~p data: ~s~n", [self(), Code, jsx:encode(Response)]),
+  log:info("[~p] 8 erl_template response code: ~p data: ~s~n", [self(), Code, jsx:encode(Response)]),
   % log:info( "HTTP Response: ~p~n", [Response] ),
   % { ok, cowboy_req:reply( Code, maps:merge(Headers, ?HEADERS), jsx:encode(Response), Request ), Opts};
   response_with_metric( cowboy_req:reply( Code, maps:merge(Headers, ?HEADERS), jsx:encode(Response), Request ), Code, Opts, Time);
 % ==============================================================================================
 response( { Code, Response }, Request, Time, Opts ) ->
-  log:info("[~p] erl_template response code: ~p data: ~s~n", [self(), Code, jsx:encode(Response)]),
+  log:info("[~p] 9 erl_template response code: ~p data: ~s~n", [self(), Code, jsx:encode(Response)]),
   % log:info( "HTTP Response: ~p~n", [Response] ),
   % { ok, cowboy_req:reply( Code, ?HEADERS, jsx:encode(Response), Request ), Opts };
   response_with_metric( cowboy_req:reply( Code, ?HEADERS, jsx:encode(Response), Request ), Code, Opts, Time );
 % ==============================================================================================
 response( Response, Request, Time, Opts ) ->
-  log:info("[~p] erl_template response code: ~p data: ~s~n", [self(), 200, jsx:encode(Response)]),
+  log:info("[~p] 10 erl_template response code: ~p data: ~s~n", [self(), 200, jsx:encode(Response)]),
   % log:info( "HTTP Response: ~p~n", [Response] ),
   % { ok, cowboy_req:reply( 200, ?HEADERS, jsx:encode(Response), Request ), Opts }.
   response_with_metric( cowboy_req:reply( 200, ?HEADERS, jsx:encode(Response), Request ), 200, Opts, Time ).
