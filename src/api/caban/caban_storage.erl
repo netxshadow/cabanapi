@@ -11,50 +11,33 @@
 get_all_workers() ->
   Storage = erl_template_app:get_storage_name(),
   case Storage of
-    postgres  ->  get_all_workers_from_postgres();
-    redis     ->  get_all_workers_from_redis(10, []);
+    postgres  ->  get_all_workers(postgres);
+    redis     ->  get_all_workers(redis, 10, []);
     _         ->  ok
   end.
 % ==============================================================================================
 % ===
 % ==============================================================================================
-get_all_workers_from_postgres() ->
+get_all_workers(postgres) ->
   db_postgres:query(epgsql_pool_master, get_workers_values, []).
-% ==============================================================================================
-% ===
-% ==============================================================================================
-get_all_workers_from_redis(N, WorkersList)  ->
-  case N > 0 of
-    true  ->
+get_all_workers(redis, N, WorkersList) when ( N > 0 )  ->
       db_redis:q(["MSET" | [N, 0]]),
       WorkersList1 =[[{ <<"worker_name">>, integer_to_binary(N) }, { <<"worker_value">>, <<"0">> }] | WorkersList],
-      get_all_workers_from_redis(N-1, WorkersList1);
-    false -> WorkersList
-  end.
+      get_all_workers(redis, N-1, WorkersList1);
+get_all_workers(redis, _, WorkersList)  ->  WorkersList.
 % ==============================================================================================
 % ===
 % ==============================================================================================
 set_worker_value(Worker, Value) ->
-  Storage = erl_template_app:get_storage_name(),
-  case Storage of
-    postgres  ->  set_worker_postgres(Worker, Value);
-    redis     ->  set_worker_redis(Worker, Value);
-    _         ->  ok
-  end.
-% ==============================================================================================
-% ===
-% ==============================================================================================
-set_worker_postgres(Worker, Value) ->
+    set_worker_value(Worker, Value, erl_template_app:get_storage_name()).
+set_worker_value(Worker, Value, postgres) ->
   Result = db_postgres:query(epgsql_pool_master, set_worker_value,
     [ { <<"worker_value">>, integer_to_list(Value) },
       { <<"worker_name">>, integer_to_list(Worker) }
     ]),
   log:info("Set worker postgres: ~p ~n", [Result]),
-  Result.
-% ==============================================================================================
-% ===
-% ==============================================================================================
-set_worker_redis(Worker, Value) ->
+  Result;
+set_worker_value(Worker, Value, redis) ->
   Result = db_redis:q(["MSET" | [Worker, Value]]),
   log:info("Set worker redis: ~p ~n", [Result]),
   Result.
@@ -62,24 +45,14 @@ set_worker_redis(Worker, Value) ->
 % ===
 % ==============================================================================================
 get_worker_value(Worker) ->
-  Storage = erl_template_app:get_storage_name(),
-  case Storage of
-    postgres  ->  get_worker_postgres(Worker);
-    redis     ->  get_worker_redis(Worker);
-    _         ->  ok
-  end.
+  get_worker_value(Worker, erl_template_app:get_storage_name()).
 % ==============================================================================================
-% ===
-% ==============================================================================================
-get_worker_postgres(Worker) ->
+get_worker_value(Worker, postgres) ->
   Result = db_postgres:query(epgsql_pool_master, get_worker_value,
     [{ <<"worker_name">>, integer_to_list(Worker) }]),
   log:info("Get worker postgres: ~p ~n", [Result]),
-  Result.
-% ==============================================================================================
-% ===
-% ==============================================================================================
-get_worker_redis(Worker) ->
+  Result;
+get_worker_value(Worker, redis) ->
   Result = db_redis:q(["MGET" | [Worker]]),
   log:info("Get worker redis: ~p ~n", [Result]),
   Result.
