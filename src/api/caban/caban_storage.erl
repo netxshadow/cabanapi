@@ -23,9 +23,9 @@ get_all_workers(postgres) ->
   db_postgres:query(epgsql_pool_master, get_workers_values, []).
 % ==============================================================================================
 get_all_workers(redis, N, WorkersList) when ( N > 0 )  ->
-      db_redis:q(["MSET" | [N, 0]]),
-      WorkersList1 =[[{ <<"worker_name">>, integer_to_binary(N) }, { <<"worker_value">>, <<"0">> }] | WorkersList],
-      get_all_workers(redis, N-1, WorkersList1);
+  db_redis:q(["MSET" | [N, 0]]),
+  WorkersList1 =[[{ <<"worker_name">>, integer_to_binary(N) }, { <<"worker_value">>, <<"0">> }] | WorkersList],
+  get_all_workers(redis, N-1, WorkersList1);
 % ==============================================================================================
 get_all_workers(redis, _, WorkersList)  ->  WorkersList.
 % ==============================================================================================
